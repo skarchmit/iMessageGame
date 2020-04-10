@@ -9,4 +9,6 @@ import Foundation
 
 public class Game {
 	
+	public var players: Players = Players()
+	
 }
