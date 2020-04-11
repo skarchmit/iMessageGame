@@ -9,7 +9,7 @@ import Messages
 import SpriteKit
 
 @available(iOS 10.0, *)
-class MessagesVC: MSMessagesAppViewController {
+public class MessagesVC: MSMessagesAppViewController {
 	
 	/// One game accessed by all
 	public var game: Game = Game()
