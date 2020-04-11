@@ -8,7 +8,7 @@
 import Foundation
 import SpriteKit
 
-class Scene: SKScene {
+public class Scene: SKScene {
 	
 	public var game: Game
 	
