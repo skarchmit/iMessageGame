@@ -19,11 +19,6 @@ class MessagesVC: MSMessagesAppViewController {
 	
 	private var scene: SKScene!
 	private var skview: SKView!
-	
-	private var gameScene: GameScene?
-	private var lobbyScene: LobbyScene?
-	private var newGameScene: NewGameScene?
-	
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -32,26 +27,23 @@ class MessagesVC: MSMessagesAppViewController {
 		you = Player(uuid: activeConversation!.localParticipantIdentifier.uuidString)
 		
 	}
-	
-	override public func viewDidAppear(_ animated: Bool) {
-		super.viewDidAppear(animated)
-		
-		
-		/// Load the appropriate scene
-	}
+
 	
 	private func manageScenes(message: MSMessage? = nil) {
 		if let m = message, presentationStyle == .expanded {
-			// load gameScene / lobbyScene
+			/// update game
+			game.update(fromMessage: m)
+			
+			/// load gameScene / lobbyScene as needed; if loaded already update is not necessary
+			///
+			
 		} else {
 			// load newGameScene
 		}
 	}
 	
 	private func updateGame(with message: MSMessage) {
-		// Make a new game
-		if game == nil { game = Game() }
-	
+		
 	}
 	
 	
