@@ -9,7 +9,7 @@ import Messages
 import SpriteKit
 
 @available(iOS 10.0, *)
-public class MessagesVC: MSMessagesAppViewController {
+open class MessagesVC: MSMessagesAppViewController {
 	
 	/// One game accessed by all
 	public var game: Game = Game()
@@ -20,7 +20,7 @@ public class MessagesVC: MSMessagesAppViewController {
 	private var scene: SKScene!
 	private var skview: SKView!
 
-	override func viewDidLoad() {
+	public override func viewDidLoad() {
 		super.viewDidLoad()
 		
 		/// Add yourself to the players
