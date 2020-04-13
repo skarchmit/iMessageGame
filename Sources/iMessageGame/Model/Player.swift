@@ -7,9 +7,16 @@
 
 import Foundation
 
-public class Player: Observable {
+public class Player: Codable {
 	
-	public var observer: Observer?
+	private enum CodingKeys: String, CodingKey {
+		
+		// use
+		case name = "name"
+		case isCurrentTurn = "isCurrTurn"
+	}
+	
+	public var observer: Any?
 	
 	public var name: String = "Player"
 	

@@ -8,13 +8,29 @@
 import Foundation
 
 /// Player information to be hidden away from the main interface
-class PlayerWrapper {
+class PlayerWrapper: Codable {
+	
+	private enum CodingKeys: String, CodingKey {
+		
+		// use
+		case uuid = "uuid"
+		case player = "player"
+		case next = "next"
+		case previous = "prev"
+		
+	}
+	
 	
 	/// UUID to identify if the player is already in the game
 	public var uuid: String
 	
 	/// This player
 	public var player: Player
+	
+	/// absorbed value
+	public var isCurrentTurn: Bool {
+		return player.isCurrentTurn
+	}
 	
 	/// Next / Previous players
 	public weak var next: PlayerWrapper!
