@@ -14,16 +14,30 @@ public class Players: RandomAccessCollection, Sequence  {
 	public var endIndex: Int
 
 	/// Properties of the collection, players
-	private var _players = [Player]()
+	private var _players = [PlayerWrapper]()
 	private var _max: Int
 	
 	/// symlinks to the  players
-	public var you: Player!			/// quick access to yourself
-	public var current: Player!		/// quick access to the current player
+	private var youWrapper: PlayerWrapper!
+	private var currentWrapper: PlayerWrapper!
+	
+	/// quick access to yourself
+	public var you: Player!	{
+		get {
+			return youWrapper.player
+		}
+	}
+	
+	/// quick access to the current player
+	public var current: Player {
+		get {
+			return currentWrapper.player
+		}
+	}
 	
 	/// Quick access to see if it your turn; should be the same as you.isCurrentTurn
 	public var isYourTurn: Bool {
-		return you == current
+		return youWrapper == currentWrapper
 	}
 	
 	/// bool variable to block adding more players for any reason; like game has started etc.
@@ -46,7 +60,7 @@ public class Players: RandomAccessCollection, Sequence  {
 			items.append(URLQueryItem(name: "player", value: player.uuid))
 		}
 		
-		items.append(URLQueryItem(name: "current", value: "\(current.uuid)"))
+		items.append(URLQueryItem(name: "current", value: "\(currentWrapper.uuid)"))
 		
 		return items
 		
@@ -83,25 +97,32 @@ public class Players: RandomAccessCollection, Sequence  {
 			return nil
 			
 		}
+		let newPlayer = PlayerWrapper(player: Player(), uuid: uuid)
 		
-		let newPlayer = Player(uuid: uuid)
-
+		let lastPlayer = _players.last ?? newPlayer
+		let firstPlayer = _players.first ?? newPlayer
+			
+		newPlayer.next = firstPlayer
+		newPlayer.previous = lastPlayer
+		
+		firstPlayer.previous = newPlayer
+		lastPlayer.next = newPlayer
+		
 		_players.append(newPlayer)
 	
-		
 		endIndex += 1
 		
-		return newPlayer
+		return newPlayer.player
 	}
 	
 	
 	/// accessibility of Players info at position
 	public subscript(_ position: Int) -> Player {
-		return _players[position]
+		return (_players[position]).player
 	}
 	
 	
-	private func setCurrent(player: Player?) {
+	private func setCurrent(player: PlayerWrapper?) {
 	
 		if player == nil {
 			logger.error("unable to set player as current")
@@ -110,26 +131,26 @@ public class Players: RandomAccessCollection, Sequence  {
 
 		logger.info("setting current player to \(player!.uuid)")
 		
-		for i in startIndex..<endIndex {
+		for _player in _players {
 			
-			if player == _players[i] {
-				_players[i].isCurrentTurn = true
+			if player == _player {
+				_player.player.isCurrentTurn = true
 				logger.info("setting player \(player!.uuid) isCurrentTurn to true")
 				
 			} else {
-				_players[i].isCurrentTurn = false
+				_player.player.isCurrentTurn = false
 				logger.info("setting player \(player!.uuid) isCurrentTurn to false")
 			}
 		}
 	
-		current = player
+		currentWrapper = player
 	}
 	
 	/// set the current player by searching the UUID
 	/// - Parameter uuid: UUID String to search and set as the current player; if uuid string is not found, then no player is set
 	internal func setCurrent(toPlayerWithUuid uuid: String) {
 		
-		var p: Player?
+		var p: PlayerWrapper?
 		
 		for player in _players {
 			if player.uuid == uuid {
@@ -147,9 +168,9 @@ public class Players: RandomAccessCollection, Sequence  {
 	/// sets up isCurrentTurn in the player for sprite to get updates
 	public func next(){
 		
-		setCurrent(player: current.next)
+		setCurrent(player: currentWrapper.next)
 		
-		logger.info("Next player set to: \(String(describing: current.uuid)), isCurrentTurn\(current.isCurrentTurn)")
+		logger.info("Next player set to: \(String(describing: currentWrapper.uuid)), isCurrentTurn\(current.isCurrentTurn)")
 		
 	
 	}
@@ -169,7 +190,7 @@ public class Players: RandomAccessCollection, Sequence  {
 	public func random(includeYourself: Bool = false) -> Player {
 		// TODO: Return a random Player
 		// TODO: Check if the random player is included and return a different one
-		return Player(uuid: "")
+		return Player()
 	}
 	
 

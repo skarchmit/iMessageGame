@@ -8,21 +8,19 @@
 import Foundation
 
 public class Player: Observable {
-
-	public var uuid: String
 	
-	public init(uuid: String) {
-		self.uuid = uuid
+	public var observer: Observer?
+	
+	public var name: String = "Player"
+	
+	// helper variables for the observer to use
+	public var isCurrentTurn: Bool = false
+	
+	
+	public init(name: String = "Player") {
+		self.name = name
 	}
 
 }
 
-extension Player: Hashable{
-	public static func == (lhs: Player, rhs: Player) -> Bool {
-		return lhs.uuid == rhs.uuid
-	}
-	
-	public func hash(into hasher: inout Hasher) {
-		hasher.combine(self.uuid)
-	}
-}
+
