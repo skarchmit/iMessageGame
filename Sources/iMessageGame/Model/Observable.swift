@@ -7,10 +7,13 @@
 
 import Foundation
 
+/// For Views
 public protocol Observer {
+	var observable: Observable? {get set}
 	func update()
 }
 
-public class Observable {
+/// For Models
+public protocol Observable {
 	public var observer: Observer?
 }
