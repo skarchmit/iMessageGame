@@ -10,9 +10,9 @@ import SpriteKit
 
 public class Scene: SKScene {
 	
-	public var game: Game
+	public var game: GameProtocol
 	
-	public init(size: CGSize, game: Game) {
+	public init(size: CGSize, game: GameProtocol) {
 		self.game = game
 		super.init(size: size)
 	}
