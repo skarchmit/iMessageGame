@@ -1,3 +1,3 @@
 # iMessageGame
 
-A description of this package.
+A tool to quickly create a game with a wrapper around the players
