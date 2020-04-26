@@ -23,6 +23,12 @@ open class MessagesVC: MSMessagesAppViewController {
 	
 	private var scene: Scene!
 	private var skview: SKView!
+	
+	public var newGameScene: SKScene!
+	public var lobbyGameScene: SKScene!
+	public var gameScene: SKScene!
+	
+	
 
 	open override func viewDidLoad() {
 		super.viewDidLoad()	}
