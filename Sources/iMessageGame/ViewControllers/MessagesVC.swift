@@ -24,9 +24,9 @@ open class MessagesVC: MSMessagesAppViewController {
 	private var scene: Scene!
 	private var skview: SKView!
 	
-	public var newGameScene: SKScene!
-	public var lobbyGameScene: SKScene!
-	public var gameScene: SKScene!
+	open var newGameScene: SKScene!
+	open var lobbyGameScene: SKScene!
+	open var gameScene: SKScene!
 	
 	
 
