@@ -8,7 +8,8 @@
 import Foundation
 import SpriteKit
 
-public class Scene: SKScene {
+//@available(iOS 12.0, *)
+open class Scene: SKScene {
 	
 	public var game: GameProtocol
 	
@@ -17,8 +18,19 @@ public class Scene: SKScene {
 		super.init(size: size)
 	}
 	
-	required init?(coder aDecoder: NSCoder) {
+	required public init?(coder aDecoder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
 	}
 	
+//	override public init(fileNamed: String) {
+//		super.init(fileNamed: fileNamed)!
+//	}
+//
+//	override init
+	
+}
+
+public protocol SceneProtocol {
+	var game: GameProtocol { get set }
+	func update()
 }
