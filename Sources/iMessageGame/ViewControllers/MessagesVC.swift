@@ -21,8 +21,8 @@ open class MessagesVC: MSMessagesAppViewController {
 	/// Yourself
 	public var you: Player!
 	
-	private var scene: Scene!
-	private var skview: SKView!
+	private var _scene: SKScene!
+	private var _skview: SKView!
 	
 	open var newGameScene: SKScene!
 	open var lobbyGameScene: SKScene!
@@ -31,7 +31,18 @@ open class MessagesVC: MSMessagesAppViewController {
 	
 
 	open override func viewDidLoad() {
-		super.viewDidLoad()	}
+		super.viewDidLoad()
+		print ("viewDidLoad")
+		if let skview = self.view as? SKView {
+			self._skview = skview
+			_skview.showsFPS = true
+			_skview.showsNodeCount = true
+			_skview.ignoresSiblingOrder = true
+			print ("skview initialized")
+		}
+		
+		manageScenes()
+	}
 	
 	/// When the view appears, we get to see all the participants of the game
 	/// - Parameter animated: animated
@@ -47,21 +58,38 @@ open class MessagesVC: MSMessagesAppViewController {
 		for remoteParticipantIdentifier in activeConversation!.remoteParticipantIdentifiers {
 			print (remoteParticipantIdentifier.uuidString)
 		}
-		
+	}
+	
+	open override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(animated)
 	}
 	
 	
 	private func manageScenes(message: MSMessage? = nil) {
+		print ("Manage Scenes")
+		
+		self._scene = nil
+		
 		if let m = message, presentationStyle == .expanded {
 			/// update game
 			gameWrapper.update(fromMessage: m)
 			
 			/// load gameScene / lobbyScene as needed; if loaded already update is not necessary
-			///
+			/// TODO: put logic in here
+				
+			self._scene = self.gameScene //as! Scene
 			
 		} else {
-			// load newGameScene
+			/// load newGameScene
+			self._scene = self.newGameScene //as! Scene
 		}
+		
+		self._scene.scaleMode = .aspectFill
+		
+		print("Presenting scene")
+		_skview.presentScene(self._scene)
+		
+		
 	}
 	
 	
@@ -70,8 +98,51 @@ open class MessagesVC: MSMessagesAppViewController {
 	}
 	
 	
+	// MARK: - Messages Entry Points
+	open override func willBecomeActive(with conversation: MSConversation) {
+		super.didBecomeActive(with: conversation)
+		
+		// request an enlarged view if we got a message;
+		// the transition to will take care of managing views
+		if conversation.selectedMessage != nil {
+			requestPresentationStyle(.expanded)
+		} else {
+			manageScenes()
+		}
+		
+	}
 	
+	
+	/**
+	Runs only when the extension is active
+	*/
+	open override func willSelect(_ message: MSMessage, conversation: MSConversation) {
+		super.willSelect(message, conversation: conversation)
+		requestPresentationStyle(.expanded)
+	}
+	
+	open override func didSelect(_ message: MSMessage, conversation: MSConversation) {
+		super.didSelect(message, conversation: conversation)
+		manageScenes(message: message)
+	}
+	
+	/**
+	When extension is open, do this when you receive the message
+	refresh the game by managing views
+	*/
+	open override func didReceive(_ message: MSMessage, conversation: MSConversation) {
+		super.didReceive(message, conversation: conversation)
+		manageScenes(message: message)
+	}
+	
+
+	
+	open override func didTransition(to presentationStyle: MSMessagesAppPresentationStyle) {
+		super.didTransition(to: presentationStyle)
+		manageScenes(message: activeConversation?.selectedMessage)
+	}
 }
+
 
 
 @available(iOS 10.0, *)
@@ -105,6 +176,7 @@ extension MessagesVC {
 	@available(iOS 11.0, *)
 	public func send(message: MSMessage, into conversation: MSConversation, withConfirmation: Bool){
 		
+		print ("sending")
 		if withConfirmation {
 			
 			conversation.insert(message) { error in
