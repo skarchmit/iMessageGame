@@ -14,7 +14,7 @@ open class MessagesVC: MSMessagesAppViewController {
 	/// One game accessed by all
 	public var gameWrapper: GameWrapper = GameWrapper()
 	
-	public var game: GameProtocol?
+	public var game: GameWrapper?
 	
 	public var players: Players = Players()
 	
@@ -27,7 +27,7 @@ open class MessagesVC: MSMessagesAppViewController {
 	open var newGameScene: SKScene!
 	open var lobbyGameScene: SKScene!
 	open var gameScene: SKScene!
-	
+
 	
 
 	open override func viewDidLoad() {
@@ -40,9 +40,10 @@ open class MessagesVC: MSMessagesAppViewController {
 			_skview.ignoresSiblingOrder = true
 			print ("skview initialized")
 		}
-		
+    
 		manageScenes()
 	}
+
 	
 	/// When the view appears, we get to see all the participants of the game
 	/// - Parameter animated: animated
@@ -58,10 +59,6 @@ open class MessagesVC: MSMessagesAppViewController {
 		for remoteParticipantIdentifier in activeConversation!.remoteParticipantIdentifiers {
 			print (remoteParticipantIdentifier.uuidString)
 		}
-	}
-	
-	open override func viewDidAppear(_ animated: Bool) {
-		super.viewDidAppear(animated)
 	}
 	
 	
@@ -154,13 +151,13 @@ extension MessagesVC {
 	///   - caption: caption for the messge
 	///   - session: current session
 	/// - Returns: Generated MSMessage
-	public func composeMessage(with gameWrapper: GameWrapper, caption: String, session: MSSession = MSSession(), summaryText: String = "Sent Message") -> MSMessage {
+	public func composeMessage(caption: String, session: MSSession = MSSession(), summaryText: String = "Sent Message") -> MSMessage {
 		
 		let layout = MSMessageTemplateLayout()
 		layout.caption = caption
 		
 		let message = MSMessage(session: session)
-		message.url = gameWrapper.URL
+        message.url = self.game.URL
 		message.layout = layout
 		message.summaryText = summaryText
 		
