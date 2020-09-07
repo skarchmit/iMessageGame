@@ -8,7 +8,7 @@
 import Messages
 import SpriteKit
 
-@available(iOS 10.0, *)
+@available(iOS 12.0, *)
 open class MessagesVC: MSMessagesAppViewController {
 	
 	/// One game accessed by all
@@ -23,7 +23,7 @@ open class MessagesVC: MSMessagesAppViewController {
 	
 	private var _scene: SKScene!
     
-//    private var _sceneWrapper: SceneWrapper?
+    private var _sceneWrapper: SceneDelegate?
     
 	private var _skview: SKView!
     private var _session: MSSession?
@@ -75,13 +75,13 @@ open class MessagesVC: MSMessagesAppViewController {
 			/// load gameScene / lobbyScene as needed; if loaded already update is not necessary
 			/// TODO: put logic in here
 				
-//            self._sceneWrapper = SceneWrapper(scene: self.gameScene)
-            self._scene = self.gameScene
+            self._sceneWrapper = SceneWrapper(scene: self.gameScene)
+//            self._scene = self.gameScene
 			
 		} else {
 			/// load newGameScene
-//            self._sceneWrapper = SceneWrapper(scene: self.newGameScene)
-            self._scene = self.newGameScene
+            self._sceneWrapper = SceneWrapper(scene: self.newGameScene)
+//            self._scene = self.newGameScene
 		}
 
         
@@ -91,8 +91,10 @@ open class MessagesVC: MSMessagesAppViewController {
         self._scene.scaleMode = .aspectFill
         
 		print("Presenting scene")
-        _skview.presentScene(self._scene)
+//        _skview.presentScene(self._scene)
 		
+        _skview.presentScene(self._sceneWrapper.scene)
+        
 		
 	}
 	
