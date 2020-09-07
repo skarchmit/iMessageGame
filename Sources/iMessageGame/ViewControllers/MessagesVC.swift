@@ -22,7 +22,12 @@ open class MessagesVC: MSMessagesAppViewController {
 	public var you: Player!
 	
 	private var _scene: SKScene!
+    
+//    private var _sceneWrapper: SceneWrapper?
+    
 	private var _skview: SKView!
+    private var _session: MSSession?
+    private var _activeConversation: MSConversation?
 	
 	open var newGameScene: SKScene!
 	open var lobbyGameScene: SKScene!
@@ -32,7 +37,6 @@ open class MessagesVC: MSMessagesAppViewController {
 
 	open override func viewDidLoad() {
 		super.viewDidLoad()
-		print ("viewDidLoad")
 		if let skview = self.view as? SKView {
 			self._skview = skview
 			_skview.showsFPS = true
@@ -40,7 +44,7 @@ open class MessagesVC: MSMessagesAppViewController {
 			_skview.ignoresSiblingOrder = true
 			print ("skview initialized")
 		}
-    
+        
 		manageScenes()
 	}
 
@@ -63,10 +67,7 @@ open class MessagesVC: MSMessagesAppViewController {
 	
 	
 	private func manageScenes(message: MSMessage? = nil) {
-		print ("Manage Scenes")
-		
-		self._scene = nil
-		
+	
 		if let m = message, presentationStyle == .expanded {
 			/// update game
 			gameWrapper.update(fromMessage: m)
@@ -74,17 +75,23 @@ open class MessagesVC: MSMessagesAppViewController {
 			/// load gameScene / lobbyScene as needed; if loaded already update is not necessary
 			/// TODO: put logic in here
 				
-			self._scene = self.gameScene //as! Scene
+//            self._sceneWrapper = SceneWrapper(scene: self.gameScene)
+            self._scene = self.gameScene
 			
 		} else {
 			/// load newGameScene
-			self._scene = self.newGameScene //as! Scene
+//            self._sceneWrapper = SceneWrapper(scene: self.newGameScene)
+            self._scene = self.newGameScene
 		}
+
+        
+//        self._sceneWrapper?.delegate = self
+//        self._sceneWrapper?.scene.scaleMode = .aspectFill
 		
-		self._scene.scaleMode = .aspectFill
-		
+        self._scene.scaleMode = .aspectFill
+        
 		print("Presenting scene")
-		_skview.presentScene(self._scene)
+        _skview.presentScene(self._scene)
 		
 		
 	}
@@ -151,13 +158,15 @@ extension MessagesVC {
 	///   - caption: caption for the messge
 	///   - session: current session
 	/// - Returns: Generated MSMessage
-	public func composeMessage(caption: String, session: MSSession = MSSession(), summaryText: String = "Sent Message") -> MSMessage {
+	public func composeMessage(caption: String, summaryText: String = "Sent Message") -> MSMessage {
 		
+        let session = self._session ?? MSSession()
+        
 		let layout = MSMessageTemplateLayout()
 		layout.caption = caption
 		
 		let message = MSMessage(session: session)
-        message.url = self.game.URL
+        message.url = self.game?.URL
 		message.layout = layout
 		message.summaryText = summaryText
 		
@@ -171,9 +180,10 @@ extension MessagesVC {
 	///   - conversation: the conversation to inject the message into
 	///   - withConfirmation: whether the user must confirm to send
 	@available(iOS 11.0, *)
-	public func send(message: MSMessage, into conversation: MSConversation, withConfirmation: Bool){
+	public func send(message: MSMessage, withConfirmation: Bool){
 		
-		print ("sending")
+        let conversation = self._activeConversation ?? MSConversation()
+        
 		if withConfirmation {
 			
 			conversation.insert(message) { error in
@@ -191,3 +201,5 @@ extension MessagesVC {
 	}
 	
 }
+
+

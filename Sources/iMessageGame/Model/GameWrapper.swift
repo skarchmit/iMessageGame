@@ -8,7 +8,7 @@
 import Foundation
 import Messages
 
-public class GameWrapper {
+open class GameWrapper {
 	
 	public var players: Players = Players()
 	
@@ -32,7 +32,7 @@ public class GameWrapper {
 		return components.url!
 	}
 	
-	init (game: GameProtocol? = nil) {
+	public init (game: GameProtocol? = nil) {
 		self.game = game
 	}
 	
