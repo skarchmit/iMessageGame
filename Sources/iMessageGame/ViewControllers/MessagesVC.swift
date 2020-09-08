@@ -174,7 +174,7 @@ extension MessagesVC {
     private func sendWithCofirmation(message: MSMessage, conversation: MSConversation) {
         conversation.insert(message) { error in
             if let error = error {
-                print ("Error in sending message")
+                print("Error in sending message")
                 print(error)
             }
         }
@@ -183,7 +183,7 @@ extension MessagesVC {
     private func sendWithoutCofirmation(message: MSMessage, conversation: MSConversation) {
         conversation.send(message) { error in
             if let error = error {
-                print ("Error in sending message")
+                print("Error in sending message")
                 print(error)
             }
         }
