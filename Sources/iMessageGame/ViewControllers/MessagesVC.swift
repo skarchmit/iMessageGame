@@ -48,7 +48,6 @@ open class MessagesVC: MSMessagesAppViewController {
             _skview.ignoresSiblingOrder = true
             print("skview initialized")
         }
-
         manageScenes()
     }
 
@@ -165,13 +164,14 @@ extension MessagesVC {
         let conversation = _activeConversation ?? MSConversation()
 
         if withConfirmation {
-            sendWithCofirmation(message: message, conversation: conversation)
+            sendWithCofirmation(message: message)
         } else {
-            sendWithoutCofirmation(message: message, conversation: conversation)
+            sendWithoutCofirmation(message: message)
         }
     }
 
-    private func sendWithCofirmation(message: MSMessage, conversation: MSConversation) {
+    private func sendWithCofirmation(message: MSMessage) {
+        guard let conversation = self.activeConversation else {fatalError("Conversation Expected")}
         conversation.insert(message) { error in
             if let error = error {
                 print("Error in sending message")
@@ -180,7 +180,8 @@ extension MessagesVC {
         }
     }
 
-    private func sendWithoutCofirmation(message: MSMessage, conversation: MSConversation) {
+    private func sendWithoutCofirmation(message: MSMessage) {
+        guard let conversation = self.activeConversation else {fatalError("Conversation Expected")}
         conversation.send(message) { error in
             if let error = error {
                 print("Error in sending message")
