@@ -70,6 +70,7 @@ open class MessagesVC: MSMessagesAppViewController {
 
         if let m = message, presentationStyle == .expanded {
             // TODO: Extract m JSON, fill in the scene
+            print(m.url)
             currentScene = scenes!.requestScene(sceneType: .active)
 
         } else {
@@ -148,7 +149,7 @@ extension MessagesVC {
         layout.caption = caption
 
         let message = MSMessage(session: session)
-        message.url = game?.URL
+        message.url = self.game?.URL
         message.layout = layout
         message.summaryText = summaryText
 
