@@ -7,21 +7,13 @@
 
 import Foundation
 
-public class Player: Codable {
-    private enum CodingKeys: String, CodingKey {
-        // use
-        case name
-        case isCurrentTurn = "isCurrTurn"
-    }
+public struct Player: Codable {
 
-    public var observer: Any?
-
+    private var uuid: String
     public var name: String = "Player"
 
-    // helper variables for the observer to use
-    public var isCurrentTurn: Bool = false
-
-    public init(name: String = "Player") {
+    public init(name: String = "Player", uuid: String) {
         self.name = name
+        self.uuid = uuid
     }
 }

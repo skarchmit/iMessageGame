@@ -19,16 +19,16 @@ open class Scenes {
         self.lobby = lobby
     }
 
-    public func requestScene(sceneType: SceneType) -> Scene {
+    public func requestScene(sceneType: SceneType) {
         switch sceneType {
         case .active:
-            return active!
+            self.current = active!
 
         case .end:
-            return end ?? new!
+            self.current =  end ?? new!
 
         default:
-            return new!
+            self.current =  new!
         }
     }
 }

@@ -13,38 +13,22 @@ open class MessagesVC: MSMessagesAppViewController {
     /// Scenes Manager
     public var scenes: Scenes?
 
-    /// One game accessed by all
-    public var gameWrapper: GameWrapper = GameWrapper()
+    public var game: Codable?
 
-    public var game: GameWrapper?
-
-    public var players: Players = Players()
-
-    /// Yourself
-    public var you: Player!
-
-    //	private var _scene: Scene!
-
-//    private var _sceneDelegate: SceneDelegate?
+//    public var players: Players?
 
     /// Window Managers
-    private var _skview: SKView!
-    private var _session: MSSession?
-    private var _activeConversation: MSConversation?
-
-//    /// Different types of scenes to switch between
-    //	open var newGameScene: Scene?
-    //	open var lobbyGameScene: Scene?
-//    open var activeGameScene: Scene?
-//    open var endGameScene: Scene?
+    internal var _skview: SKView!
+    internal var _session: MSSession?
+    internal var _activeConversation: MSConversation?
 
     override open func viewDidLoad() {
         print("viewDidLoad")
         super.viewDidLoad()
         if let skview = view as? SKView {
             _skview = skview
-            _skview.showsFPS = true
-            _skview.showsNodeCount = true
+            _skview.showsFPS = false
+            _skview.showsNodeCount = false
             _skview.ignoresSiblingOrder = true
             print("skview initialized")
         }
@@ -55,38 +39,25 @@ open class MessagesVC: MSMessagesAppViewController {
     /// - Parameter animated: animated
     override open func viewWillAppear(_ animated: Bool) {
         // get information about the active converstation
-
-        players = Players()
-
-        you = players.add(uuid: (activeConversation?.localParticipantIdentifier.uuidString)!)
-
-        for remoteParticipantIdentifier in activeConversation!.remoteParticipantIdentifiers {
-            print("Player", remoteParticipantIdentifier.uuidString)
-        }
+        // TODO: Get player information
     }
 
     private func manageScenes(message: MSMessage? = nil) {
-        var currentScene: Scene
 
         if let m = message, presentationStyle == .expanded {
             // TODO: Extract m JSON, fill in the scene
-            print(m.url)
-            currentScene = scenes!.requestScene(sceneType: .active)
+//            print(m.url)
+            scenes!.requestScene(sceneType: .active)
 
         } else {
-            currentScene = scenes!.requestScene(sceneType: .new)
+             scenes!.requestScene(sceneType: .new)
         }
 
-//        self._sceneWrapper?.delegate = self
-//        self._sceneWrapper?.scene.scaleMode = .aspectFill
-
-        currentScene.gameDelegate = self
-        currentScene.scaleMode = .aspectFill
+        scenes?.current!.gameDelegate = self
+        scenes?.current!.scaleMode = .aspectFill
 
         print("Presenting scene")
-//        _skview.presentScene(self._scene)
-
-        _skview.presentScene(currentScene)
+        _skview.presentScene(self.scenes?.current)
     }
 
     internal func update(from message: MSMessage) {
@@ -131,70 +102,5 @@ open class MessagesVC: MSMessagesAppViewController {
     override open func didTransition(to presentationStyle: MSMessagesAppPresentationStyle) {
         super.didTransition(to: presentationStyle)
         manageScenes(message: activeConversation?.selectedMessage)
-    }
-}
-
-@available(iOS 12.0, *)
-extension MessagesVC {
-    /// Creates a message from the parameters
-    /// - Parameters:
-    ///   - game: the game to send
-    ///   - caption: caption for the messge
-    ///   - session: current session
-    /// - Returns: Generated MSMessage
-    private func composeMessage(caption: String, summaryText: String = "Sent Message") -> MSMessage {
-        let session = _session ?? MSSession()
-
-        let layout = MSMessageTemplateLayout()
-        layout.caption = caption
-
-        let message = MSMessage(session: session)
-        message.url = self.game?.URL
-        message.layout = layout
-        message.summaryText = summaryText
-
-        return message
-    }
-
-    /// Sends Message by inserting into conversation
-    /// - Parameters:
-    ///   - message: MSMessage to send
-    ///   - conversation: the conversation to inject the message into
-    ///   - withConfirmation: whether the user must confirm to send
-    open func send(message: MSMessage, withConfirmation: Bool) {
-        let conversation = _activeConversation ?? MSConversation()
-
-        if withConfirmation {
-            sendWithCofirmation(message: message)
-        } else {
-            sendWithoutCofirmation(message: message)
-        }
-    }
-
-    private func sendWithCofirmation(message: MSMessage) {
-        guard let conversation = self.activeConversation else {fatalError("Conversation Expected")}
-        conversation.insert(message) { error in
-            if let error = error {
-                print("Error in sending message")
-                print(error)
-            }
-        }
-    }
-
-    private func sendWithoutCofirmation(message: MSMessage) {
-        guard let conversation = self.activeConversation else {fatalError("Conversation Expected")}
-        conversation.send(message) { error in
-            if let error = error {
-                print("Error in sending message")
-                print(error)
-            }
-        }
-    }
-
-    open func send(caption: String, summaryText: String, withConfirmation: Bool) {
-        // TODO: wrap game
-        let game = scenes?.current?.game
-        let message = composeMessage(caption: caption, summaryText: summaryText)
-        send(message: message, withConfirmation: withConfirmation)
     }
 }

@@ -13,6 +13,6 @@ open class Scene: SKScene {
     public weak var gameDelegate: iMessageGame.MessagesVC?
 
     /// Variables for use to interact
-    public var players: Players?
-    public var game: GameProtocol?
+//    public var players: Players?
+//    public var game: GameProtocol?
 }
