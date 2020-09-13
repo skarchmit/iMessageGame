@@ -11,8 +11,7 @@ import SpriteKit
 open class Scene: SKScene {
     /// Delegate to obtain send back to the scene
     public weak var gameDelegate: iMessageGame.MessagesVC?
-
-    /// Variables for use to interact
-//    public var players: Players?
-//    public var game: GameProtocol?
+    
+    public var gameManager = GameManager?
+    
 }

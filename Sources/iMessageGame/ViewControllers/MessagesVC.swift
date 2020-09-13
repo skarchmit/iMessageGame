@@ -13,7 +13,7 @@ open class MessagesVC: MSMessagesAppViewController {
     /// Scenes Manager
     public var scenes: Scenes?
 
-    public var game: Codable?
+//    public var game: Codable?
 
 //    public var players: Players?
 

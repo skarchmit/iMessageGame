@@ -69,7 +69,7 @@ extension MessagesVC {
 
     open func send(caption: String, summaryText: String, withConfirmation: Bool) {
         // TODO: wrap game
-//        let game = scenes?.current?.game
+        let game = scenes?.current?.gameManager
         let message = composeMessage(caption: caption, summaryText: summaryText)
         send(message: message, withConfirmation: withConfirmation)
     }
