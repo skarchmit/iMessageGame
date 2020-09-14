@@ -12,6 +12,6 @@ open class Scene: SKScene {
     /// Delegate to obtain send back to the scene
     public weak var gameDelegate: iMessageGame.MessagesVC?
     
-    public var gameManager = GameManager?
+    public var game : iMessageGame.Game?
     
 }

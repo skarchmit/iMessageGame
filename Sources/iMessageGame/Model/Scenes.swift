@@ -8,27 +8,30 @@
 import SpriteKit
 
 @available(iOS 12.0, *)
-open class Scenes {
-    private var active, end, new, lobby: Scene?
-    public var current: Scene?
+open class SceneManager {
+    open var active, end, new, lobby: SceneInfo?
 
-    public init(active: Scene? = nil, end: Scene? = nil, new: Scene? = nil, lobby: Scene? = nil) {
-        self.active = active
-        self.end = end
-        self.new = new
-        self.lobby = lobby
+    public var current: Scene? {
+        didSet {
+            if current != nil {
+            }
+        }
     }
 
     public func requestScene(sceneType: SceneType) {
-        switch sceneType {
-        case .active:
-            self.current = active!
+        var curr: SceneInfo {
+            switch sceneType {
+            case .active:
+                return active!
 
-        case .end:
-            self.current =  end ?? new!
+            case .end:
+                return end ?? new!
 
-        default:
-            self.current =  new!
+            default:
+                return new!
+            }
         }
+
+        current = curr.initialized
     }
 }

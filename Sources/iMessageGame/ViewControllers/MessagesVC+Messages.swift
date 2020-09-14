@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Sergey Karchmit on 9/12/20.
 //
@@ -17,16 +17,15 @@ extension MessagesVC {
     ///   - session: current session
     /// - Returns: Generated MSMessage
     private func composeMessage(caption: String, summaryText: String = "Sent Message") -> MSMessage {
-        let session = self._session ?? MSSession()
+        let session = _session ?? MSSession()
 
         let layout = MSMessageTemplateLayout()
         layout.caption = caption
 
         let message = MSMessage(session: session)
-        
+
         /// Build the URL from the components, Players +
-        
-        
+
         message.layout = layout
         message.summaryText = summaryText
 
@@ -39,7 +38,6 @@ extension MessagesVC {
     ///   - conversation: the conversation to inject the message into
     ///   - withConfirmation: whether the user must confirm to send
     open func send(message: MSMessage, withConfirmation: Bool) {
-
         if withConfirmation {
             sendWithCofirmation(message: message)
         } else {
@@ -68,9 +66,13 @@ extension MessagesVC {
     }
 
     open func send(caption: String, summaryText: String, withConfirmation: Bool) {
-        // TODO: wrap game
-        let game = scenes?.current?.gameManager
         let message = composeMessage(caption: caption, summaryText: summaryText)
+
+        /// Attempt to send message
+        if let game = sceneManager.current?.game, let gameUrl = serializeGame(game: game) {
+            message.url = gameUrl
+        }
+
         send(message: message, withConfirmation: withConfirmation)
     }
 }

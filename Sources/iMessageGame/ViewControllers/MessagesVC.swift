@@ -10,8 +10,12 @@ import SpriteKit
 
 @available(iOS 12.0, *)
 open class MessagesVC: MSMessagesAppViewController {
+    
+    
     /// Scenes Manager
-    public var scenes: Scenes?
+    public var sceneManager: SceneManager = SceneManager()
+    
+    open var gameType: Game.Type = Game.self
 
 //    public var game: Codable?
 
@@ -44,20 +48,18 @@ open class MessagesVC: MSMessagesAppViewController {
 
     private func manageScenes(message: MSMessage? = nil) {
 
-        if let m = message, presentationStyle == .expanded {
-            // TODO: Extract m JSON, fill in the scene
-//            print(m.url)
-            scenes!.requestScene(sceneType: .active)
-
+        if let m = message, presentationStyle == .expanded, let game = deserializeGame(url: m.url) {
+            sceneManager.requestScene(sceneType: .active)
+            // Update game
         } else {
-             scenes!.requestScene(sceneType: .new)
+            sceneManager.requestScene(sceneType: .new)
         }
 
-        scenes?.current!.gameDelegate = self
-        scenes?.current!.scaleMode = .aspectFill
+        sceneManager.current!.gameDelegate = self
+        sceneManager.current!.scaleMode = .aspectFill
 
         print("Presenting scene")
-        _skview.presentScene(self.scenes?.current)
+        _skview.presentScene(self.sceneManager.current)
     }
 
     internal func update(from message: MSMessage) {
