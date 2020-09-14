@@ -24,8 +24,6 @@ extension MessagesVC {
 
         let message = MSMessage(session: session)
 
-        /// Build the URL from the components, Players +
-
         message.layout = layout
         message.summaryText = summaryText
 
