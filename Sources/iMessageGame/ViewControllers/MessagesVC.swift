@@ -14,12 +14,9 @@ open class MessagesVC: MSMessagesAppViewController {
     
     /// Scenes Manager
     public var sceneManager: SceneManager = SceneManager()
-    
+
+    /// Instantiating a specific subclass of a game
     open var gameType: Game.Type = Game.self
-
-//    public var game: Codable?
-
-//    public var players: Players?
 
     /// Window Managers
     internal var _skview: SKView!
@@ -49,8 +46,12 @@ open class MessagesVC: MSMessagesAppViewController {
     private func manageScenes(message: MSMessage? = nil) {
 
         if let m = message, presentationStyle == .expanded, let game = deserializeGame(url: m.url) {
+            /// Request the scene (instantiates it)
             sceneManager.requestScene(sceneType: .active)
-            // Update game
+            
+            /// Pass in a deserialized game instance
+            /// Job of the Scene class to parse with didChange
+            sceneManager.current?.game = game
         } else {
             sceneManager.requestScene(sceneType: .new)
         }

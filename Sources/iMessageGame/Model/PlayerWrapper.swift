@@ -23,10 +23,10 @@ class PlayerWrapper: Codable {
     /// This player
     public var player: Player
 
-    /// absorbed value
-    public var isCurrentTurn: Bool {
-        return player.isCurrentTurn
-    }
+//    /// api
+//    public var isCurrentTurn: Bool {
+//        return player.isCurrentTurn
+//    }
 
     /// Next / Previous players
     public weak var next: PlayerWrapper!
