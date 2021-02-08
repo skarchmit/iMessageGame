@@ -11,7 +11,9 @@ import SpriteKit
 open class Scene: SKScene {
     /// Delegate to obtain send back to the scene
     public weak var gameDelegate: iMessageGame.MessagesVC?
-    
-    public var game : iMessageGame.Game?
-    
+
+    public var game: iMessageGame.Game?
+
+    public var playersInSession = [Player]()
+    public var yourUuid: String = ""
 }

@@ -10,8 +10,6 @@ import SpriteKit
 
 @available(iOS 12.0, *)
 open class MessagesVC: MSMessagesAppViewController {
-    
-    
     /// Scenes Manager
     public var sceneManager: SceneManager = SceneManager()
 
@@ -39,16 +37,43 @@ open class MessagesVC: MSMessagesAppViewController {
     /// When the view appears, we get to see all the participants of the game
     /// - Parameter animated: animated
     override open func viewWillAppear(_ animated: Bool) {
+        if _activeConversation != nil {
+            setUpCurrentPlayersInSession()
+        }
+		super.viewWillAppear(animated)
+    }
+
+//	open override func viewDidAppear(_ animated: Bool) {
+////        if _activeConversation != nil {
+////            setUpCurrentPlayersInSession()
+////        }
+//    }
+
+    private func setUpCurrentPlayersInSession() {
         // get information about the active converstation
         // TODO: Get player information
+        // This would work best with iCloud storage for avatars etc.
+
+        var playersInSession = [Player]()
+
+        let yourUuid = _activeConversation!.localParticipantIdentifier.uuidString
+        let yourselfPlayer = Player(name: "You", uuidString: yourUuid)
+        playersInSession.append(yourselfPlayer)
+
+        for playerUuid in _activeConversation!.remoteParticipantIdentifiers {
+            let opponent = Player(name: "Opponent", uuidString: playerUuid.uuidString)
+            playersInSession.append(opponent)
+        }
+
+        sceneManager.current?.playersInSession = playersInSession
+        sceneManager.current?.yourUuid = yourUuid
     }
 
     private func manageScenes(message: MSMessage? = nil) {
-
         if let m = message, presentationStyle == .expanded, let game = deserializeGame(url: m.url) {
             /// Request the scene (instantiates it)
             sceneManager.requestScene(sceneType: .active)
-            
+
             /// Pass in a deserialized game instance
             /// Job of the Scene class to parse with didChange
             sceneManager.current?.game = game
@@ -60,7 +85,7 @@ open class MessagesVC: MSMessagesAppViewController {
         sceneManager.current!.scaleMode = .aspectFill
 
         print("Presenting scene")
-        _skview.presentScene(self.sceneManager.current)
+        _skview.presentScene(sceneManager.current)
     }
 
     internal func update(from message: MSMessage) {

@@ -9,13 +9,11 @@ import Foundation
 
 open class Game: Codable {
     /// Automanaged by MessageVC for you, but you may set up different items as pleased
-    open var players: String?
+    open var players: Players = Players()
 
     /// Override these variables to set up the game
     open var isOver: Bool = false
-    
-    public init () {
-        
+
+    public init() {
     }
-    
 }
