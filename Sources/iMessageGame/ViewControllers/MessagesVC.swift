@@ -100,14 +100,18 @@ open class MessagesVC: MSMessagesAppViewController {
     /**
      When extension is open, do this when you receive the message
      refresh the game by managing views
+
+     According to Apple's website:
+     The system does not call this method if the controller’s presentationStyle property is MSMessagesAppPresentationStyle.transcript, or if its presentationContext property is MSMessagesAppPresentationContext.media.
      */
     override open func didReceive(_ message: MSMessage, conversation: MSConversation) {
+        log.info("didReceive message \(presentationContext.rawValue)")
         super.didReceive(message, conversation: conversation)
         manageScenes(message: message)
-        log.info("Received message")
     }
 
     override open func didTransition(to presentationStyle: MSMessagesAppPresentationStyle) {
+        log.info("didTransition to \(presentationStyle.rawValue)")
         super.didTransition(to: presentationStyle)
         manageScenes(message: activeConversation?.selectedMessage)
     }
