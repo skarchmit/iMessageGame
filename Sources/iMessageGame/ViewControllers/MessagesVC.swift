@@ -5,6 +5,7 @@
 //  Created by Sergey Karchmit on 4/10/20.
 //
 
+import Logging
 import Messages
 import SpriteKit
 
@@ -15,68 +16,50 @@ open class MessagesVC: MSMessagesAppViewController {
 
     /// Instantiating a specific subclass of a game
     open var gameType: Game.Type = Game.self
+    open var playerType: Player.Type = Player.self
 
     /// Window Managers
     internal var _skview: SKView!
     internal var _session: MSSession?
-    internal var _activeConversation: MSConversation?
 
     override open func viewDidLoad() {
-        print("viewDidLoad")
         super.viewDidLoad()
         if let skview = view as? SKView {
             _skview = skview
             _skview.showsFPS = false
             _skview.showsNodeCount = false
             _skview.ignoresSiblingOrder = true
-            print("skview initialized")
         }
         manageScenes()
     }
 
-    /// When the view appears, we get to see all the participants of the game
-    /// - Parameter animated: animated
-    override open func viewWillAppear(_ animated: Bool) {
-        if _activeConversation != nil {
-            setUpCurrentPlayersInSession()
-        }
-		super.viewWillAppear(animated)
-    }
-
-//	open override func viewDidAppear(_ animated: Bool) {
-////        if _activeConversation != nil {
-////            setUpCurrentPlayersInSession()
-////        }
-//    }
-
-    private func setUpCurrentPlayersInSession() {
+    internal func setUpCurrentPlayersInSession(game: Game) -> Game {
         // get information about the active converstation
         // TODO: Get player information
         // This would work best with iCloud storage for avatars etc.
 
-        var playersInSession = [Player]()
+        log.info("Setting up game's players")
 
-        let yourUuid = _activeConversation!.localParticipantIdentifier.uuidString
-        let yourselfPlayer = Player(name: "You", uuidString: yourUuid)
-        playersInSession.append(yourselfPlayer)
+        /// Recreate yourself, TODO: Pull this information from cloud saves instead of building it here
+        let yourUuid = activeConversation!.localParticipantIdentifier.uuidString
+        let yourself = Player(name: "You", uuidString: yourUuid)
 
-        for playerUuid in _activeConversation!.remoteParticipantIdentifiers {
-            let opponent = Player(name: "Opponent", uuidString: playerUuid.uuidString)
-            playersInSession.append(opponent)
-        }
+        game.players.add(yourself)
 
-        sceneManager.current?.playersInSession = playersInSession
-        sceneManager.current?.yourUuid = yourUuid
+        /// Must call these in order to make game.players.current and game.players.yourself
+        /// be a reference instead of a copy
+        game.players.setYourselfPlayer(uuid: yourUuid)
+
+        return game
     }
 
     private func manageScenes(message: MSMessage? = nil) {
         if let m = message, presentationStyle == .expanded, let game = deserializeGame(url: m.url) {
-            /// Request the scene (instantiates it)
             sceneManager.requestScene(sceneType: .active)
 
-            /// Pass in a deserialized game instance
-            /// Job of the Scene class to parse with didChange
-            sceneManager.current?.game = game
+            let injectedGame = setUpCurrentPlayersInSession(game: game)
+            sceneManager.current?.game = injectedGame
+
         } else {
             sceneManager.requestScene(sceneType: .new)
         }
@@ -84,11 +67,7 @@ open class MessagesVC: MSMessagesAppViewController {
         sceneManager.current!.gameDelegate = self
         sceneManager.current!.scaleMode = .aspectFill
 
-        print("Presenting scene")
         _skview.presentScene(sceneManager.current)
-    }
-
-    internal func update(from message: MSMessage) {
     }
 
     // MARK: - Messages Entry Points
@@ -125,10 +104,17 @@ open class MessagesVC: MSMessagesAppViewController {
     override open func didReceive(_ message: MSMessage, conversation: MSConversation) {
         super.didReceive(message, conversation: conversation)
         manageScenes(message: message)
+        log.info("Received message")
     }
 
     override open func didTransition(to presentationStyle: MSMessagesAppPresentationStyle) {
         super.didTransition(to: presentationStyle)
+        manageScenes(message: activeConversation?.selectedMessage)
+    }
+
+    /// Gets called at all times when you send out a message
+    override open func didStartSending(_ message: MSMessage, conversation: MSConversation) {
+        super.didStartSending(message, conversation: conversation)
         manageScenes(message: activeConversation?.selectedMessage)
     }
 }

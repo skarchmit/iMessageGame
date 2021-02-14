@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  Game.swift
 //
 //
 //  Created by Sergey Karchmit on 9/12/20.
@@ -14,6 +14,6 @@ open class Game: Codable {
     /// Override these variables to set up the game
     open var isOver: Bool = false
 
-    public init() {
-    }
+    /// Required otherwise sub class will need to create it
+    public init() {}
 }

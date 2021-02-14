@@ -65,12 +65,11 @@ extension MessagesVC {
 
     open func send(caption: String, summaryText: String, withConfirmation: Bool) {
         let message = composeMessage(caption: caption, summaryText: summaryText)
-
-        /// Attempt to send message
-        if let game = sceneManager.current?.game, let gameUrl = serializeGame(game: game) {
-            message.url = gameUrl
-        }
-
+        guard let game = sceneManager.current?.game else { return }
+        let injectedGame = setUpCurrentPlayersInSession(game: game)
+        guard let gameUrl = serializeGame(game: injectedGame) else { return }
+        message.url = gameUrl
         send(message: message, withConfirmation: withConfirmation)
+        log.info("Successfully sent message.")
     }
 }

@@ -8,4 +8,4 @@
 import Foundation
 import Logging
 
-let logger = Logger(label: Bundle.main.bundleIdentifier!)
+let log = Logger(label: Bundle.main.bundleIdentifier!)
