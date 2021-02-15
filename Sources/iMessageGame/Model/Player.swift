@@ -12,10 +12,11 @@ open class Player: Codable {
     public var name: String
     public var score: Int = 0
     public var isOpponent: Bool = true
+    public var isCurrentTurn: Bool = false
 
-    public init(name: String = "Player", uuidString: String = "") {
+    public init(name: String = "Player", uuidString: String? = nil) {
         self.name = name
-        uuid = uuidString
+        uuid = uuidString ?? UUID().uuidString
     }
 }
 

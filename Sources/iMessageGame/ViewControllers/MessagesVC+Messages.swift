@@ -17,12 +17,11 @@ extension MessagesVC {
     ///   - session: current session
     /// - Returns: Generated MSMessage
     private func composeMessage(caption: String, summaryText: String = "Sent Message") -> MSMessage {
-        let session = _session ?? MSSession()
-
         let layout = MSMessageTemplateLayout()
+        let _session = session ?? MSSession()
         layout.caption = caption
 
-        let message = MSMessage(session: session)
+        let message = MSMessage(session: _session)
 
         message.layout = layout
         message.summaryText = summaryText
@@ -47,27 +46,34 @@ extension MessagesVC {
         guard let conversation = activeConversation else { fatalError("Conversation Expected") }
         conversation.insert(message) { error in
             if let error = error {
-                print("Error in sending message")
-                print(error)
+                log.error("Error in sending message")
+                log.error("\(error)")
             }
         }
+        requestPresentationStyle(.compact)
     }
 
     private func sendWithoutCofirmation(message: MSMessage) {
         guard let conversation = activeConversation else { fatalError("Conversation Expected") }
         conversation.send(message) { error in
             if let error = error {
-                print("Error in sending message")
-                print(error)
+                log.error("Error in sending message")
+                log.error("\(error)")
             }
         }
     }
 
-    open func send(caption: String, summaryText: String, withConfirmation: Bool) {
+    open func send(caption: String, summaryText: String, withConfirmation: Bool, injectCurrentPlayer: Bool = false) {
         let message = composeMessage(caption: caption, summaryText: summaryText)
         guard let game = sceneManager.current?.game else { return }
-        let injectedGame = setUpCurrentPlayersInSession(game: game)
-        guard let gameUrl = serializeGame(game: injectedGame) else { return }
+
+        let game2: Game
+        if injectCurrentPlayer {
+            game2 = setUpCurrentPlayersInSession(game: game)
+        } else {
+            game2 = game
+        }
+        guard let gameUrl = serializeGame(game: game2) else { return }
         message.url = gameUrl
         send(message: message, withConfirmation: withConfirmation)
         log.info("Successfully sent message.")

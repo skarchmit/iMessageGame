@@ -8,5 +8,5 @@
 import Foundation
 
 public enum SceneType {
-    case active, end, new, lobby
+    case active, new
 }

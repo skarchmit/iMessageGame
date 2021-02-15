@@ -9,29 +9,37 @@ import SpriteKit
 
 @available(iOS 12.0, *)
 open class SceneManager {
-    open var active, end, new, lobby: SceneInfo?
+    private var _active, _new: SceneLoader?
 
-    public var current: Scene? {
-        didSet {
-            if current != nil {
+    public var current: Scene?
+    private var _currentSceneLoader: SceneLoader? {
+        didSet(oldValue) {
+            /// Only initialize if changed
+            if oldValue != _currentSceneLoader {
+                // TODO: Somehow kill the other scene?
+                current = _currentSceneLoader?.initialize()
             }
         }
     }
 
+    public func add(_ sceneLoader: SceneLoader) {
+        if sceneLoader.type == .active {
+            _active = sceneLoader
+        } else if sceneLoader.type == .new {
+            _new = sceneLoader
+        }
+    }
+
     public func requestScene(sceneType: SceneType) {
-        var curr: SceneInfo {
+        var curr: SceneLoader {
             switch sceneType {
             case .active:
-                return active!
-
-            case .end:
-                return end ?? new!
+                return _active!
 
             default:
-                return new!
+                return _new!
             }
         }
-
-        current = curr.initialized
+        _currentSceneLoader = curr
     }
 }

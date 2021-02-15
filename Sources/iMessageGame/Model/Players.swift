@@ -16,7 +16,14 @@ public class Players: RandomAccessCollection, Sequence, Codable {
     public var current: Player { return _players[_currentPlayerIndex] }
     public var yourself: Player { return _players[_yourselfPlayerIndex] }
 
+    /// MessagesVC will inject yourself as the player when we instantiate the game
+    /// So we are guaranteed to have one player and therefore
+    /// current and yourself will be successful calls
+    /// But in order to send game
     private var _players: [Player] = [Player]()
+
+    /// The game.canSend property will short curcuit before looking
+    /// at the _currentPlayerIndex if we dont have 2 players
     private var _currentPlayerIndex: Int = 0
     private var _yourselfPlayerIndex: Int = 0
 
@@ -64,6 +71,18 @@ public class Players: RandomAccessCollection, Sequence, Codable {
 
     public func next() {
         _currentPlayerIndex = (_currentPlayerIndex + 1) % endIndex
+        updatePlayerVariables()
+    }
+
+    public func previous() {
+        _currentPlayerIndex = (_currentPlayerIndex - 1) % endIndex
+        updatePlayerVariables()
+    }
+
+    public func updatePlayerVariables() {
+        for player in _players {
+            player.isCurrentTurn = player == current
+        }
     }
 }
 

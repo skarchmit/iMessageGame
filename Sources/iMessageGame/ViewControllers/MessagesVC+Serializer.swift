@@ -23,6 +23,7 @@ extension MessagesVC {
     }
 
     internal func deserializeGame(url: URL?) -> Game? {
+        log.info("Deseriliazing Game")
         if let u = url {
             guard let urlComponents = NSURLComponents(url: u, resolvingAgainstBaseURL: false) else { return nil }
             guard let queryItems = urlComponents.queryItems else { return nil }
