@@ -15,6 +15,9 @@ public class Players: RandomAccessCollection, Sequence, Codable {
     /// Quick accessors to get instance of Player
     public var current: Player { return _players[_currentPlayerIndex] }
     public var yourself: Player { return _players[_yourselfPlayerIndex] }
+    public var isYourTurn: Bool {
+        return current == yourself
+    }
 
     /// MessagesVC will inject yourself as the player when we instantiate the game
     /// So we are guaranteed to have one player and therefore

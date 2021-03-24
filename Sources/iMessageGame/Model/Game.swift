@@ -15,9 +15,10 @@ open class Game: Codable {
 
     open var status: GameStatus = .new
 
+    /// CanSend the game only if it is your turn
     open var canSend: Bool {
         /// Can send should short curcuit if
-        return players.count >= 2 && players.current == players.yourself && status != .over
+        return players.count >= 2 && players.isYourTurn && status != .over
     }
 
     public func start() {
@@ -28,10 +29,6 @@ open class Game: Codable {
     public func end() {
         status = .over
     }
-	
-	public func takeTurn() {
-		
-	}
 
     /// Required otherwise sub class will need to create it
     public init() {}
