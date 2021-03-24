@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  SceneManager.swift
 //
 //
 //  Created by Sergey Karchmit on 9/7/20.

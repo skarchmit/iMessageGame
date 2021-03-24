@@ -69,7 +69,7 @@ extension MessagesVC {
 
         let game2: Game
         if injectCurrentPlayer {
-            game2 = setUpCurrentPlayersInSession(game: game)
+            game2 = setupYourselfPlayer(game: game)
         } else {
             game2 = game
         }

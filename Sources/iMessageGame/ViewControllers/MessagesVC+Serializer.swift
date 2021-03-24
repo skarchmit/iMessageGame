@@ -15,9 +15,11 @@ extension MessagesVC {
 
         let json = encode(game: game)
         let gameUrlQueryItem = URLQueryItem(name: "game", value: json)
+        let gameUUIDQueryItem = URLQueryItem(name: "uuid", value: UUID().uuidString)
         var components = URLComponents()
         var items = [URLQueryItem]()
         items.append(gameUrlQueryItem)
+        items.append(gameUUIDQueryItem)
         components.queryItems = items
         return components.url
     }
@@ -34,6 +36,19 @@ extension MessagesVC {
             let game = decode(jsonString: gameJsonString, classType: gameType)
 
             return game
+        }
+        return nil
+    }
+
+    internal func getGameUUID(url: URL?) -> String? {
+        if let u = url {
+            guard let urlComponents = NSURLComponents(url: u, resolvingAgainstBaseURL: false) else { return nil }
+            guard let queryItems = urlComponents.queryItems else { return nil }
+
+            // decode
+            guard let uuidString = queryItems[1].value else { return nil }
+
+            return uuidString
         }
         return nil
     }

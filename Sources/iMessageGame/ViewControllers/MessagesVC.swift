@@ -13,7 +13,17 @@ import SpriteKit
 open class MessagesVC: MSMessagesAppViewController {
     /// Scenes Manager
     public var sceneManager: SceneManager = SceneManager()
-    internal var previous_url: URL?
+    internal var lastGameUUID: String? {
+        willSet(newValue) {
+            if newValue != nil {
+                self.lastGameUUID = newValue
+            }
+        } didSet(oldValue) {
+            reloadGame = oldValue != self.lastGameUUID
+        }
+    }
+
+    internal var reloadGame: Bool = true
 
     /// Instantiating a specific subclass of a game
     open var gameType: Game.Type = Game.self
@@ -34,7 +44,7 @@ open class MessagesVC: MSMessagesAppViewController {
         manageScenes()
     }
 
-    internal func setUpCurrentPlayersInSession(game: Game) -> Game {
+    internal func setupYourselfPlayer(game: Game) -> Game {
         // get information about the active converstation
         // TODO: Get player information
         // This would work best with iCloud storage for avatars etc.
@@ -54,24 +64,29 @@ open class MessagesVC: MSMessagesAppViewController {
         return game
     }
 
-    private func manageScenes(message: MSMessage? = nil) {
-		log.info("Same URL: \(previous_url == message?.url) \(String(describing: previous_url)) ::::::::: \(String(describing: message?.url))")
-        if let m = message, presentationStyle == .expanded, let game = deserializeGame(url: m.url) {
-            sceneManager.requestScene(sceneType: .active)
+    private func setScene() {
+        sceneManager.requestScene(sceneType: .active)
+    }
 
-            let injectedGame = setUpCurrentPlayersInSession(game: game)
-            sceneManager.current?.game = injectedGame
+    private func manageScenes(message: MSMessage? = nil) {
+        if let m = message {
+            lastGameUUID = getGameUUID(url: m.url)
+            sceneManager.requestScene(sceneType: .active)
 
             if session == nil {
                 session = message?.session
             }
 
-            /// Auto start (temporary? possibly an init  variable?)
-            /// Currently only set up for 2 players currently
-            if game.status == .new && game.players.count >= 2 {
-                game.start()
-            }
+            if reloadGame, let game = deserializeGame(url: m.url) {
+                let injectedGame = setupYourselfPlayer(game: game)
+                sceneManager.current?.game = injectedGame
 
+                /// Auto start (temporary? possibly an init  variable?)
+                /// Currently only set up for 2 players currently
+                if game.status == .new && game.players.count >= 2 {
+                    game.start()
+                }
+            }
         } else {
             sceneManager.requestScene(sceneType: .new)
         }
@@ -80,8 +95,6 @@ open class MessagesVC: MSMessagesAppViewController {
         sceneManager.current!.scaleMode = .aspectFill
 
         _skview.presentScene(sceneManager.current)
-
-        previous_url = message?.url
     }
 
     // MARK: - Messages Entry Points
@@ -133,9 +146,9 @@ open class MessagesVC: MSMessagesAppViewController {
         manageScenes(message: activeConversation?.selectedMessage)
     }
 
-    /// Gets called at all times when you send out a message
-    override open func didStartSending(_ message: MSMessage, conversation: MSConversation) {
-        super.didStartSending(message, conversation: conversation)
-        manageScenes(message: activeConversation?.selectedMessage)
-    }
+//    /// Gets called at all times when you send out a message
+//    override open func didStartSending(_ message: MSMessage, conversation: MSConversation) {
+//        super.didStartSending(message, conversation: conversation)
+//        manageScenes(message: activeConversation?.selectedMessage)
+//    }
 }
