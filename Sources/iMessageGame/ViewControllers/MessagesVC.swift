@@ -145,10 +145,4 @@ open class MessagesVC: MSMessagesAppViewController {
         super.didTransition(to: presentationStyle)
         manageScenes(message: activeConversation?.selectedMessage)
     }
-
-//    /// Gets called at all times when you send out a message
-//    override open func didStartSending(_ message: MSMessage, conversation: MSConversation) {
-//        super.didStartSending(message, conversation: conversation)
-//        manageScenes(message: activeConversation?.selectedMessage)
-//    }
 }
