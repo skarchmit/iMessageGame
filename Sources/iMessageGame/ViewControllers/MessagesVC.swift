@@ -136,7 +136,7 @@ open class MessagesVC: MSMessagesAppViewController {
      The system does not call this method if the controller’s presentationStyle property is MSMessagesAppPresentationStyle.transcript, or if its presentationContext property is MSMessagesAppPresentationContext.media.
      */
     override open func didReceive(_ message: MSMessage, conversation: MSConversation) {
-        log.info("########################################### Received Message")
+        log.info("Received Message")
         super.didReceive(message, conversation: conversation)
         manageScenes(message: message)
     }
