@@ -34,33 +34,37 @@ extension MessagesVC {
     ///   - message: MSMessage to send
     ///   - conversation: the conversation to inject the message into
     ///   - withConfirmation: whether the user must confirm to send
-    open func send(message: MSMessage, withConfirmation: Bool) {
+    open func send(message: MSMessage, withConfirmation: Bool) -> Bool {
         if withConfirmation {
-            sendWithCofirmation(message: message)
+            return sendWithCofirmation(message: message)
         } else {
-            sendWithoutCofirmation(message: message)
+            return sendWithoutCofirmation(message: message)
         }
     }
 
-    private func sendWithCofirmation(message: MSMessage) {
+    private func sendWithCofirmation(message: MSMessage) -> Bool {
         guard let conversation = activeConversation else { fatalError("Conversation Expected") }
+        var isSuccess = true
         conversation.insert(message) { error in
             if let error = error {
-                log.error("Error in sending message")
-                log.error("\(error)")
+                log.error("Error in sending message \(error)")
+                isSuccess = false
             }
         }
         requestPresentationStyle(.compact)
+        return isSuccess
     }
 
-    private func sendWithoutCofirmation(message: MSMessage) {
+    private func sendWithoutCofirmation(message: MSMessage) -> Bool {
         guard let conversation = activeConversation else { fatalError("Conversation Expected") }
+        var isSuccess = true
         conversation.send(message) { error in
             if let error = error {
-                log.error("Error in sending message")
-                log.error("\(error)")
+                log.error("Error in sending message \(error)")
+                isSuccess = false
             }
         }
+        return isSuccess
     }
 
     open func send(caption: String, summaryText: String, withConfirmation: Bool, injectCurrentPlayer: Bool = false) {
@@ -75,7 +79,8 @@ extension MessagesVC {
         }
         guard let gameUrl = serializeGame(game: game2) else { return }
         message.url = gameUrl
-        send(message: message, withConfirmation: withConfirmation)
-        log.info("Successfully sent message.")
+        if send(message: message, withConfirmation: withConfirmation) {
+            log.info("Successfully sent message.")
+        }
     }
 }
