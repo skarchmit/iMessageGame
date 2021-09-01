@@ -13,6 +13,7 @@ public class Players: RandomAccessCollection, Sequence, Codable {
     public var min: Int
 
     /// Quick accessors to get instance of Player
+	// TODO:Check if we need to always work with the index
     public var current: Player { return _players[_currentPlayerIndex] }
     public var yourself: Player { return _players[_yourselfPlayerIndex] }
     public var isYourTurn: Bool {
